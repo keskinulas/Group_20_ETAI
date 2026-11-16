@@ -1,0 +1,43 @@
+# Initial configuration; src/ implementation will consume this schema.
+project_name: Group_20_ETAI
+seed: 42
+
+data:
+  train_path: data/raw/train.csv
+  batch_path: data/raw/test.csv
+  # Set actual column names after inspecting the dataset.
+  id_column: null
+  classification_target: null
+  regression_target: null
+
+outputs:
+  model_dir: models
+  output_dir: outputs
+  classification_model: models/classification.joblib
+  regression_model: models/regression.joblib
+  kaggle_csv: outputs/kaggle_submission.csv
+  spending_csv: outputs/spending_predictions.csv
+  metrics_json: outputs/metrics.json
+
+validation:
+  test_size: 0.2
+  # Confirm an appropriate split strategy after inspecting customer/time fields.
+  strategy: null
+
+classification:
+  model: random_forest
+  threshold: 0.5
+  hyperparameters:
+    n_estimators: 300
+    max_depth: null
+    min_samples_leaf: 2
+    class_weight: balanced
+    n_jobs: -1
+
+regression:
+  model: random_forest
+  hyperparameters:
+    n_estimators: 300
+    max_depth: null
+    min_samples_leaf: 2
+    n_jobs: -1
