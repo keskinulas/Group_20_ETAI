@@ -5,10 +5,14 @@ seed: 42
 data:
   train_path: data/raw/train.csv
   batch_path: data/raw/test.csv
-  # Set actual column names after inspecting the dataset.
-  id_column: null
-  classification_target: null
-  regression_target: null
+  sample_submission_path: data/raw/sample_submission.csv
+  customers_path: data/raw/clientes.csv
+  use_customers: false
+  id_column: ID
+  customer_id_column: customer_id
+  date_column: purchase_date
+  classification_target: repeat_purchase_90d
+  regression_target: spend_next_90d
 
 outputs:
   model_dir: models
