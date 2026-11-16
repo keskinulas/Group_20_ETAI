@@ -1,16 +1,16 @@
 # Group_20_ETAI
 
-ETAI projesi — Grup 20, 2026/27 akademik yılı.
+ETAI group project — Group 20, academic year 2026/27.
 
-Amaç: bir satın alma için tekrar alışveriş olasılığını, sınıflandırma kararını ve harcama tahminini üretmek.
+Predict whether a customer will make another purchase within 90 days of the current transaction and how much they will spend during that period.
 
-## Durum
+## Project status
 
-Bu ilk commit yalnızca proje yapılandırmasını içerir. `src/` kodu ve notebook'lar henüz eklenmemiştir; aşağıdaki eğitim ve tahmin komutları planlanan arayüzdür ve şu anda çalışmaz. Handbook incelenmiştir; CSV şeması ve veri temizleme kararları dosyalar sağlandığında doğrulanacaktır.
+This repository currently contains the initial project configuration. The `src/` modules and notebooks have not been implemented yet; the training and prediction commands below describe the planned interface and do not run yet. The handbook has been reviewed. The CSV schema and cleaning decisions will be verified once the data files are available.
 
-## Kurulum
+## Setup
 
-Python 3.11 önerilir. Repoyu indirdikten sonra repo klasöründe çalışın.
+Python 3.11 is recommended. Run the following commands from the repository root.
 
 ### macOS
 
@@ -30,25 +30,27 @@ python -m pip install -r requirements.txt
 New-Item -ItemType Directory -Force data/raw
 ```
 
-PowerShell etkinleştirmeyi engellerse sanal ortamı etkinleştirmeden `.\.venv\Scripts\python.exe -m pip install -r requirements.txt` kullanabilirsiniz; diğer komutlarda da `python` yerine bu yolu yazın.
+If PowerShell blocks activation, install dependencies with `.\.venv\Scripts\python.exe -m pip install -r requirements.txt` and use `.\.venv\Scripts\python.exe` instead of `python` in subsequent commands.
 
-## Veriler ve yapı
+## Data and repository structure
 
-`train.csv`, `test.csv`, `sample_submission.csv` ve isteğe bağlı `clientes.csv` dosyalarını yerel `data/raw/` klasörüne koyun. Dosya adlarını ve sütunları `config.yaml` içinde ayarlayın. Ham veri, sanal ortamlar, modeller ve üretilen çıktılar Git'e eklenmez. Tüm yapılandırma yolları repo köküne göredir.
+Place `train.csv`, `test.csv`, `sample_submission.csv` and the optional `clientes.csv` in the local `data/raw/` directory. Configure file paths and column names in `config.yaml`. Raw data, virtual environments, trained models and generated outputs are excluded from Git. All configuration paths are relative to the repository root.
+
+Planned directories:
 
 ```text
 notebooks/  # 01_data_exploration, 02_classification, 03_regression, 04_explainability
 src/        # data.py, features.py, train.py, predict_batch.py, predict_one.py
-data/raw/   # Yerel CSV'ler
-models/     # Eğitim sırasında oluşturulacak kayıtlı pipeline'lar
-outputs/    # Tahmin CSV'leri ve değerlendirmeler
+data/raw/   # Local CSV files
+models/     # Saved pipelines produced during training
+outputs/    # Prediction CSV files and evaluation results
 ```
 
-Notebook'larda temizleme kararları, model karşılaştırmaları ve her iki modelin açıklanabilirlik analizi belgelenecektir. Eğitim ve her iki tahmin yolu aynı özellik üretimini kullanacaktır; kayıtlı modeller ön işlemeyi de içerecektir.
+The notebooks will document cleaning decisions, model comparisons and explainability analyses for both models. Training, batch prediction and single-purchase prediction will share the same feature generation logic. Saved pipelines will include preprocessing.
 
-## Planlanan komutlar
+## Planned commands
 
-Kod eklendikten ve yapılandırma tamamlandıktan sonra:
+Once the code is implemented and the configuration is complete:
 
 ```bash
 python -m src.train --config config.yaml
@@ -56,20 +58,22 @@ python -m src.predict_batch --config config.yaml
 python -m src.predict_one --config config.yaml --input purchase.json
 ```
 
-`purchase.json` tek satın alma özelliklerini içeren bir JSON nesnesi olacaktır; gerekli alanlar veri şeması kesinleşince belgelenecektir. Tekil tahmin tekrar alışveriş olasılığını, yapılandırmadaki eşikle verilen kararı ve harcama tahminini döndürecektir. Toplu tahmin tüm test satırları için `ID,repeat_purchase_90d` sütunlarıyla Kaggle CSV'sini, yalnızca geri döneceği tahmin edilen satırlar için `ID,repeat_purchase_90d,spend_next_90d` sütunlarıyla harcama CSV'sini yazacaktır. Kaggle çıktısı `sample_submission.csv` yapısıyla eşleşecektir.
+`purchase.json` will contain a JSON object describing one purchase. Required fields will be documented once the data schema is verified. Single-purchase prediction will return the repeat-purchase probability, the classification decision using the configured threshold and the spending estimate.
 
-## Teslim
+Batch prediction will produce a Kaggle CSV with `ID,repeat_purchase_90d` for every test row and a separate spending CSV with `ID,repeat_purchase_90d,spend_next_90d` for customers predicted to return. The Kaggle output will follow the structure of `sample_submission.csv`.
 
-Repo adı `Group_20_ETAI` olarak belirlenmiştir. Handbook teslim arşivi için `Group20_ETAI_2627.zip` adını gerektirir; repo adı bu arşiv kuralını değiştirmez. Teslim tarihi 22 Aralık 2026, 18:00 olarak belirtilmiştir (saat dilimi belgede belirtilmemiştir). Nihai Kaggle CSV'si teslim arşivine ayrıca eklenecek ve `predict_batch.py` ile üretilen dosyayla eşleştiği kontrol edilecektir.
+## Submission
 
-## Handbook gereksinimleri
+The repository is named `Group_20_ETAI`. The handbook requires the submission archive to be named `Group20_ETAI_2627.zip`; the repository name does not change this requirement. The stated deadline is 22 December 2026 at 18:00 (the document does not specify a time zone). Include the final Kaggle CSV in the submission archive and verify that it matches the output of `predict_batch.py`.
 
-- Hedefler: `repeat_purchase_90d` ve sonraki 90 günlük harcama olan `spend_next_90d`. `ID` modelleme satırı/Kaggle kimliği, `customer_id` ise `clientes.csv` birleştirme anahtarıdır.
-- Sınıflandırmada en az 5, regresyonda en az 4 algoritma karşılaştırılmalı; ön işleme, özellik üretimi/seçimi, hiperparametre araması ve değerlendirme stratejisi gerekçelendirilmelidir. Yapılandırmadaki Random Forest yalnızca başlangıç adayıdır.
-- Regresyon ile sınıflandırma tutarlı olmalı; regresyon değerlendirmesinde gerçekten geri dönen müşteriler için RMSE, MAE ve R² raporlanmalıdır.
-- Her iki model için genel ve tek müşteri düzeyinde açıklanabilirlik analizi yapılmalıdır. İstemci yeni ve mevcut müşterilerle çalışmalıdır.
-- Özellikler satın alma anında hesaplanabilir olmalı. Her test satırının tahmini yalnızca o satır, eğitim verisi ve `clientes.csv` kullanmalı; diğer test satırlarını kullanmamalıdır. Regresyon hedefi sınıflandırma özelliği olarak kullanılmamalıdır.
-- Tahmin kayıtlı pipeline'ı yüklemeli, yeniden eğitim yapmamalıdır. Değiştirilebilir seçimler yapılandırmada tutulmalıdır.
-- Lazy Predict ve benzeri AutoML araçları yasaktır. Notebook ve kodda kullanılan her adım grup üyelerince savunulabilir olmalıdır.
+## Handbook requirements
 
-Kaynak: ETAI Project - 2627, bölümler II–VI. PDF yerel olarak incelenmiştir; repoya kopyalanmamıştır.
+- Targets: `repeat_purchase_90d` and `spend_next_90d`, the amount spent in the following 90 days. `ID` identifies a modelling row and its Kaggle submission entry; `customer_id` is the join key for `clientes.csv`.
+- Compare at least five classification algorithms and four regression algorithms. Justify preprocessing, feature engineering and selection, hyperparameter tuning and the assessment strategy. Random Forest in the initial configuration is a starting candidate.
+- Keep classification and regression predictions coherent. Report regression RMSE, MAE and R² for customers who actually returned.
+- Explain both models globally and for individual customers. The client interface must support new and returning customers.
+- Features must be computable at purchase time. Predict each test row using only that row, the training data and `clientes.csv`, never other test rows. Never use the regression target as a classification feature.
+- Prediction must load saved pipelines without retraining. Keep configurable choices in `config.yaml`.
+- Lazy Predict and similar AutoML tools are prohibited. Group members must be able to explain and defend every step included in the notebooks and code.
+
+Source: ETAI Project - 2627, sections II–VI. The PDF was reviewed locally and is not included in this repository.
