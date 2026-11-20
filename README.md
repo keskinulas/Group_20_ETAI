@@ -6,7 +6,7 @@ Predict whether a customer will make another purchase within 90 days of the curr
 
 ## Project status
 
-This repository currently contains the initial project configuration. The `src/` modules and notebooks have not been implemented yet; the training and prediction commands below describe the planned interface and do not run yet. The handbook has been reviewed. The CSV schema and cleaning decisions will be verified once the data files are available.
+The repository includes a config-driven CSV cleaning step. The training and prediction commands below describe the planned interface.
 
 ## Setup
 
@@ -47,6 +47,16 @@ outputs/    # Prediction CSV files and evaluation results
 ```
 
 The notebooks will document cleaning decisions, model comparisons and explainability analyses for both models. Training, batch prediction and single-purchase prediction will share the same feature generation logic. Saved pipelines will include preprocessing.
+
+## Clean train and test data
+
+```bash
+python main.py clean --config config.yaml
+```
+
+The command reads the paths in `data.train_path` and `data.batch_path` and writes to the two output paths in `cleaning`. By default, the cleaned CSVs are written to `data/processed/`. Train and test use the same column rules, and test retains its original row order. The optional duplicate rule applies to identical rows in train only.
+
+The `cleaning` section controls numeric conversion, category normalization, valid ranges, and column removal. The `train_drop_if_all_missing` list removes train rows only when every listed purchase field is blank. Set it to `[]` to disable the rule. The default fields identify training records with no purchase date or current purchase totals. Other missing values remain blank in the cleaned CSVs. Any imputation fitted during model development should use the training partition.
 
 ## Planned commands
 

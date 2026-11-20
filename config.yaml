@@ -1,4 +1,3 @@
-# Initial configuration; src/ implementation will consume this schema.
 project_name: Group_20_ETAI
 seed: 42
 
@@ -13,6 +12,37 @@ data:
   date_column: purchase_date
   classification_target: repeat_purchase_90d
   regression_target: spend_next_90d
+
+cleaning:
+  train_output_path: data/processed/train.csv
+  test_output_path: data/processed/test.csv
+  placeholder_tokens: [""]
+  numeric_text_columns:
+    - days_since_previous_purchase
+    - prior_mean_purchase_value
+    - prior_std_purchase_value
+    - prior_min_purchase_value
+    - prior_max_purchase_value
+    - prior_mean_gap_days
+    - prior_std_gap_days
+    - spend_365d
+  categorical_columns:
+    - payment_type
+    - salesperson
+    - commercial_zone
+    - transport_method
+    - warehouse
+    - document_series
+  canonical_categories: {}
+  validity_rules: {}
+  redundant_columns: []
+  # Remove training records with neither a timestamp nor any current purchase total.
+  train_drop_if_all_missing:
+    - purchase_date
+    - Total a Pagar
+    - Total Bruto
+    - Total Liquido
+  drop_exact_train_duplicates: true
 
 outputs:
   model_dir: models
