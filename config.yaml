@@ -16,6 +16,38 @@ data:
 cleaning:
   train_output_path: data/processed/train.csv
   test_output_path: data/processed/test.csv
+  customers_output_path: data/processed/clientes.csv
+  customer_columns_to_keep:
+    - customer_id
+    - postal_area
+    - municipality
+    - country_or_region
+    - commercial_region
+  customer_geographic_columns:
+    - postal_area
+    - municipality
+    - country_or_region
+    - commercial_region
+  customer_missing_category: Unknown
+  customer_location_relationships:
+    - [postal_code, postal_area]
+    - [postal_code, municipality]
+    - [postal_code, commercial_region]
+    - [postal_code, country_or_region]
+    - [address, postal_code]
+    - [address, postal_area]
+    - [address, municipality]
+    - [street, postal_area]
+    - [street, municipality]
+    - [postal_area, municipality]
+    - [postal_area, commercial_region]
+    - [postal_area, country_or_region]
+    - [city, municipality]
+    - [city, commercial_region]
+    - [municipality, commercial_region]
+    - [municipality, country_or_region]
+    - [island, country_or_region]
+    - [commercial_region, country_or_region]
   placeholder_tokens: [""]
   numeric_text_columns:
     - days_since_previous_purchase

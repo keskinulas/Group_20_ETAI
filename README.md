@@ -54,9 +54,9 @@ The notebooks will document cleaning decisions, model comparisons and explainabi
 python main.py clean --config config.yaml
 ```
 
-The command reads the paths in `data.train_path` and `data.batch_path` and writes to the two output paths in `cleaning`. By default, the cleaned CSVs are written to `data/processed/`. Train and test use the same column rules, and test retains its original row order. The optional duplicate rule applies to identical rows in train only.
+The command reads the paths in `data.train_path` and `data.batch_path` and writes to the output paths in `cleaning`. By default, the cleaned CSVs are written to `data/processed/`. If `data.customers_path` exists, the same command also creates `data/processed/clientes.csv`. Train and test use the same column rules, and test retains its original row order. The optional duplicate rule applies to identical rows in train only.
 
-The `cleaning` section controls numeric conversion, category normalization, valid ranges, and column removal. The `train_drop_if_all_missing` list removes train rows only when every listed purchase field is blank. Set it to `[]` to disable the rule. The default fields identify training records with no purchase date or current purchase totals. Other missing values remain blank in the cleaned CSVs. Any imputation fitted during model development should use the training partition.
+The `cleaning` section controls numeric conversion, category normalization, valid ranges, and column removal for train/test. The `train_drop_if_all_missing` list removes train rows only when every listed purchase field is blank. Set it to `[]` to disable the rule. The default fields identify training records with no purchase date or current purchase totals. Other missing values remain blank in the cleaned CSVs. Any imputation fitted during model development should use the training partition.
 
 - The original training and test files in `data/raw/` are preserved, while cleaned copies are created in `data/processed/`.
 - Exact duplicate rows were removed only from the training dataset.
@@ -64,7 +64,9 @@ The `cleaning` section controls numeric conversion, category normalization, vali
 - Numeric columns stored as text were converted into numeric format, while invalid values were converted into missing values.
 - Categorical columns were stripped of surrounding whitespace, and empty values were identified as missing values.
 - The cleaning rules are configurable through `config.yaml`, ensuring consistent processing of both datasets.
-- At present, `clientes.csv` is not integrated into the automated pipeline, and missing customer geographical values were analysed separately in a notebook.
+- The customer preprocessing follows `notebooks/preprocessing_clientes_etai_project.ipynb`: it reconstructs missing geographic values only when the original data provides one unambiguous match, checks and reports duplicate rows and `customer_id` values without deleting them, keeps `customer_id`, `postal_area`, `municipality`, `country_or_region` and `commercial_region`, extracts the code from each retained geographic label, and fills remaining geographic missing values with `Unknown`.
+- Customer records remain a separate processed CSV for joining by `customer_id`; the cleaning command does not merge them into train/test. The customer output columns, geographic relationships and missing-value category are configurable in `cleaning`.
+- The customer file is preprocessed whenever it exists. If it is absent, preprocessing is skipped when `data.use_customers` is false and reported as an error when that flag is true.
 
 
 
