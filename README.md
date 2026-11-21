@@ -58,6 +58,16 @@ The command reads the paths in `data.train_path` and `data.batch_path` and write
 
 The `cleaning` section controls numeric conversion, category normalization, valid ranges, and column removal. The `train_drop_if_all_missing` list removes train rows only when every listed purchase field is blank. Set it to `[]` to disable the rule. The default fields identify training records with no purchase date or current purchase totals. Other missing values remain blank in the cleaned CSVs. Any imputation fitted during model development should use the training partition.
 
+- The original training and test files in `data/raw/` are preserved, while cleaned copies are created in `data/processed/`.
+- Exact duplicate rows were removed only from the training dataset.
+- Training records with no purchase date and no value in any configured purchase-total field were removed.
+- Numeric columns stored as text were converted into numeric format, while invalid values were converted into missing values.
+- Categorical columns were stripped of surrounding whitespace, and empty values were identified as missing values.
+- The cleaning rules are configurable through `config.yaml`, ensuring consistent processing of both datasets.
+- At present, `clientes.csv` is not integrated into the automated pipeline, and missing customer geographical values were analysed separately in a notebook.
+
+
+
 ## Planned commands
 
 Once the code is implemented and the configuration is complete:
@@ -71,6 +81,13 @@ python -m src.predict_one --config config.yaml --input purchase.json
 `purchase.json` will contain a JSON object describing one purchase. Required fields will be documented once the data schema is verified. Single-purchase prediction will return the repeat-purchase probability, the classification decision using the configured threshold and the spending estimate.
 
 Batch prediction will produce a Kaggle CSV with `ID,repeat_purchase_90d` for every test row and a separate spending CSV with `ID,repeat_purchase_90d,spend_next_90d` for customers predicted to return. The Kaggle output will follow the structure of `sample_submission.csv`.
+
+
+
+
+
+
+
 
 ## Submission
 
